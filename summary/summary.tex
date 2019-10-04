@@ -1,5 +1,5 @@
 \documentclass{sciposter}
-\usepackage[dvipsnames,usenames,svgnames,table]{xcolor} 
+\usepackage[dvipsnames,usenames,svgnames,table,x11names, rgb, html]{xcolor} 
 \usepackage{lipsum}
 \usepackage{epsfig}
 \usepackage{amsmath}
@@ -31,58 +31,42 @@
 
 
 \usepackage{listings}
-\usepackage{sourcecodepro}
-\definecolor{listing-background}{rgb}{0.97,0.97,0.97}
-\definecolor{listing-rule}{HTML}{B3B2B3}
-\definecolor{listing-numbers}{HTML}{B3B2B3}
-\definecolor{listing-text-color}{HTML}{000000}
-\definecolor{listing-keyword}{HTML}{435489}
-\definecolor{listing-identifier}{HTML}{435489}
-\definecolor{listing-string}{HTML}{00999a}
-\definecolor{listing-comment}{HTML}{8e8e8e}
-\definecolor{listing-javadoc-comment}{HTML}{006CA9}
+\usepackage{inconsolata}
 
-\lstdefinestyle{eisvogellistingstyle}{
-	language=java,
-	numbers=left,
-	backgroundcolor=\color{listing-background},
-	basicstyle=\color{listing-text-color}\small\ttfamily{}, % print whole listing small
-	xleftmargin=0.8em, % 2.8 with line numbers
-	breaklines=true,
-	frame=single,
-	framesep=0.6mm,
-	rulecolor=\color{listing-rule},
-	frameround=ffff,
-	framexleftmargin=0.4em, % 2.4 with line numbers | 0.4 without them
-	tabsize=4, %width of tabs
-	numberstyle=\color{listing-numbers},
-	aboveskip=1.0em,
-	keywordstyle=\color{listing-keyword}\bfseries, % underlined bold black keywords
-	classoffset=0,
+
+
+
+\definecolor{background}{HTML}{FAFAFA}
+\definecolor{comment}{HTML}{ABB0B6}
+\definecolor{keywords}{HTML}{55B4D4}
+\definecolor{basicStyle}{HTML}{6C7680}
+\definecolor{variable}{HTML}{001080}
+\definecolor{string}{HTML}{86B300}
+
+
+\lstset{
+	% How/what to match
 	sensitive=true,
-	identifierstyle=\color{listing-identifier}, % nothing happens
-	commentstyle=\color{listing-comment}, % white comments
-	morecomment=[s][\color{listing-javadoc-comment}]{/**}{*/},
-	stringstyle=\color{listing-string}, % typewriter type for strings
-	showstringspaces=false, % no special string spaces
-	escapeinside={/*@}{@*/}, % for comments
-	literate=
-	{á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
-	{Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
-	{à}{{\`a}}1 {è}{{\'e}}1 {ì}{{\`i}}1 {ò}{{\`o}}1 {ù}{{\`u}}1
-	{À}{{\`A}}1 {È}{{\'E}}1 {Ì}{{\`I}}1 {Ò}{{\`O}}1 {Ù}{{\`U}}1
-	{ä}{{\"a}}1 {ë}{{\"e}}1 {ï}{{\"i}}1 {ö}{{\"o}}1 {ü}{{\"u}}1
-	{Ä}{{\"A}}1 {Ë}{{\"E}}1 {Ï}{{\"I}}1 {Ö}{{\"O}}1 {Ü}{{\"U}}1
-	{â}{{\^a}}1 {ê}{{\^e}}1 {î}{{\^i}}1 {ô}{{\^o}}1 {û}{{\^u}}1
-	{Â}{{\^A}}1 {Ê}{{\^E}}1 {Î}{{\^I}}1 {Ô}{{\^O}}1 {Û}{{\^U}}1
-	{œ}{{\oe}}1 {Œ}{{\OE}}1 {æ}{{\ae}}1 {Æ}{{\AE}}1 {ß}{{\ss}}1
-	{ç}{{\c c}}1 {Ç}{{\c C}}1 {ø}{{\o}}1 {å}{{\r a}}1 {Å}{{\r A}}1
-	{€}{{\EUR}}1 {£}{{\pounds}}1 {«}{{\guillemotleft}}1
-	{»}{{\guillemotright}}1 {ñ}{{\~n}}1 {Ñ}{{\~N}}1 {¿}{{?`}}1
+	% Border (above and below)
+	frame=single,
+	% Extra margin on line (align with paragraph)
+	xleftmargin=\parindent,
+	% Put extra space under caption
+	belowcaptionskip=1\baselineskip,
+	% Colors
+	backgroundcolor=\color{background},
+	basicstyle=\color{basicStyle}\ttfamily,
+	keywordstyle=\color{keywords},
+	commentstyle=\color{comment},
+	stringstyle=\color{string},
+	numberstyle=\color{sviolet},
+	identifierstyle=\color{variable},
+	% Break long lines into multiple lines?
+	breaklines=true,
+	% Show a character for spaces?
+	showstringspaces=false,
+	tabsize=2
 }
-\lstset{style=eisvogellistingstyle}
-
-
 
 %END LISTINGDEF
 
@@ -114,15 +98,35 @@
 \author{\large{David Zollikofer}}
 %END TITLE
 
+
+\newcommand{\psection}[1]{\par \textbf{\large#1}}
+
 \begin{document}
-\fontfamily{phv}\selectfont
+%\fontfamily{phv}\selectfont
 
 \maketitle
 
 
 
-\begin{multicols}{3}
+\begin{multicols}{2}
 \section{Eigen \& C++}
+
+\psection{Reshaping using Map}
+\begin{lstlisting}[language=C++]
+// same data different shape
+Map<Matrix<TYPE, Dynamic , Dynamic>> newMat(M.data(),newRows,newCols);
+// (Deep) copy data of M
+MatrixXd xMat = MatrixXd::Map(M.data(), n, n);
+
+while(true){
+	int a = 10;
+	string c = "jkjdfj";
+}
+
+return 12;
+
+\end{lstlisting}
+
 
 
 \section{Direct Methods for (Square) Linear Systems of Equations}
