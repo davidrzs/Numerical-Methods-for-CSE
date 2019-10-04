@@ -25,6 +25,9 @@
  }
 
 
+\usepackage{todonotes}
+
+\newcommand{\TODO}[1]{\todo[inline, color=red!40]{#1}}
 
 %BEGIN LISTINGDEF
 
@@ -111,23 +114,93 @@
 \begin{multicols}{2}
 \section{Eigen \& C++}
 
+\psection{Constructing Matrices and Vectors}
+\begin{lstlisting}[language=C++]
+// same data different shape
+Map<Matrix<TYPE, Dynamic , Dynamic>> newMat(M.data(),newRows,newCols);
+// (Deep) copy data of M
+MatrixXd xMat = MatrixXd::Map(M.data(), n, n);
+\end{lstlisting}
+
+
+\psection{Sizes, Rows, Cols, Resize}
+\begin{lstlisting}[language=C++]
+A.size() // total number of elements in matrix
+A.rows() // number of rows
+A.cols() // number of cols
+A.resize(10,100) // resized to 10 rows and 100 columns
+\end{lstlisting}
+
+
+\psection{Filling matrices}
+\begin{lstlisting}[language=C++]
+A << R,	v // can also be done using blocks. 
+u .transpose( ) ,  0;
+B << A, A, A;     // B is three horizontally stacked A's.
+A.fill(10);       // Fill A with all 10's.
+
+MatrixXd::Identity(rows,cols)          
+C.setIdentity(rows,cols)                 
+MatrixXd::Zero(rows,cols)                
+C.setZero(rows,cols)                      
+MatrixXd::Ones(rows,cols)          
+C.setOnes(rows,cols)                 
+MatrixXd::Random(rows,cols)  // uniform random numbers in (-1,1).
+C.setRandom(rows,cols)                 
+VectorXd::LinSpaced(size,low,high)        
+v.setLinSpaced(size,low,high)         
+VectorXi::LinSpaced(((hi-low)/step)+1, low,low+step*(size-1))
+\end{lstlisting}
+
+
+
 \psection{Reshaping using Map}
 \begin{lstlisting}[language=C++]
 // same data different shape
 Map<Matrix<TYPE, Dynamic , Dynamic>> newMat(M.data(),newRows,newCols);
 // (Deep) copy data of M
 MatrixXd xMat = MatrixXd::Map(M.data(), n, n);
-
-while(true){
-	int a = 10;
-	string c = "jkjdfj";
-}
-
-return 12;
-
 \end{lstlisting}
 
 
+\psection{Solving Equations}
+\begin{lstlisting}[language=C++]
+// Solve Ax = b. Result stored in x
+x = A.ldlt().solve(b));  // A sym. p.s.d.    #include <Eigen/Cholesky>
+x = A.llt() .solve(b));  // A sym. p.d.      #include <Eigen/Cholesky>
+x = A.lu()  .solve(b));  // Stable and fast. #include <Eigen/LU>
+x = A.qr()  .solve(b));  // No pivoting.     #include <Eigen/QR>
+x = A.svd() .solve(b));  // Stable, slowest. #include <Eigen/SVD>
+// .ldlt() -> .matrixL() and .matrixD()
+// .llt()  -> .matrixL()
+// .lu()   -> .matrixL() and .matrixU()
+// .qr()   -> .matrixQ() and .matrixR()
+// .svd()  -> .matrixU(), .singularValues(), and .matrixV()
+\end{lstlisting}
+
+\psection{Reductions}
+\begin{lstlisting}[language=C++]
+R.minCoeff()              
+R.maxCoeff()              
+s = R.minCoeff(&r, &c)   
+R.sum()                  
+R.colwise().sum()      
+R.prod()                
+R.rowwise().prod()        
+R.trace()                
+(a > 2).all() // if all a_i > 2 true             
+R.rowwise().all()     
+(a > 2).any()    // if any a_i > 2 true        
+(a > 2).count() // count a_i > 2 
+R.colwise().any()  
+x.norm()                 
+x.squaredNorm()       
+x.dot(y)                 
+x.cross(y)     //Requires #include <Eigen/Geometry>
+\end{lstlisting}
+
+
+\TODO{triangulare view etc, diagonal etc .}
 
 \section{Direct Methods for (Square) Linear Systems of Equations}
 
