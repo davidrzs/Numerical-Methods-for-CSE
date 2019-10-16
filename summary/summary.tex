@@ -1,0 +1,242 @@
+\documentclass{sciposter}
+\usepackage[dvipsnames,usenames,svgnames,table,x11names, rgb, html]{xcolor} 
+\usepackage{lipsum}
+\usepackage{epsfig}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[german]{babel}
+\usepackage{geometry}
+\usepackage{multicol}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{wrapfig}
+\usepackage{gensymb}
+\usepackage[utf8]{inputenc}
+\usepackage{empheq}
+
+
+\geometry{
+ landscape,
+ a1paper,
+ left=5mm,
+ right=50mm,
+ top=5mm,
+ bottom=50mm,
+ }
+
+
+\usepackage{todonotes}
+
+\newcommand{\TODO}[1]{\todo[inline, color=red!40]{#1}}
+
+%BEGIN LISTINGDEF
+
+
+
+\usepackage{listings}
+\usepackage{inconsolata}
+
+
+
+
+\definecolor{background}{HTML}{FAFAFA}
+\definecolor{comment}{HTML}{ABB0B6}
+\definecolor{keywords}{HTML}{55B4D4}
+\definecolor{basicStyle}{HTML}{6C7680}
+\definecolor{variable}{HTML}{001080}
+\definecolor{string}{HTML}{86B300}
+
+
+\lstset{
+	% How/what to match
+	sensitive=true,
+	% Border (above and below)
+	frame=single,
+	% Extra margin on line (align with paragraph)
+	xleftmargin=\parindent,
+	% Put extra space under caption
+	belowcaptionskip=1\baselineskip,
+	% Colors
+	backgroundcolor=\color{background},
+	basicstyle=\color{basicStyle}\ttfamily,
+	keywordstyle=\color{keywords},
+	commentstyle=\color{comment},
+	stringstyle=\color{string},
+	numberstyle=\color{sviolet},
+	identifierstyle=\color{variable},
+	% Break long lines into multiple lines?
+	breaklines=true,
+	% Show a character for spaces?
+	showstringspaces=false,
+	tabsize=2
+}
+
+%END LISTINGDEF
+
+
+\newcommand*\widefbox[1]{\fbox{\hspace{2em}#1\hspace{2em}}}
+
+
+\newlength\dlf  % Define a new measure, dlf
+\newcommand\alignedbox[2]{
+% Argument #1 = before & if there were no box (lhs)
+% Argument #2 = after & if there were no box (rhs)
+&  % Alignment sign of the line
+{
+\settowidth\dlf{$\displaystyle #1$}
+    % The width of \dlf is the width of the lhs, with a displaystyle font
+\addtolength\dlf{\fboxsep+\fboxrule}
+    % Add to it the distance to the box, and the width of the line of the box
+\hspace{-\dlf}
+    % Move everything dlf units to the left, so that & #1 #2 is aligned under #1 & #2
+\boxed{#1 #2}
+    % Put a box around lhs and rhs
+}
+}
+\usepackage{graphicx,url}
+
+%BEGIN TITLE
+\title{\huge{Numerical Methods for CSE}}
+
+\author{\large{David Zollikofer}}
+%END TITLE
+
+
+\newcommand{\psection}[1]{\par \textbf{\large#1}}
+
+\begin{document}
+%\fontfamily{phv}\selectfont
+
+\maketitle
+
+
+
+\begin{multicols}{2}
+\section{Eigen \& C++}
+
+\psection{Constructing Matrices and Vectors}
+\begin{lstlisting}[language=C++]
+// same data different shape
+Map<Matrix<TYPE, Dynamic , Dynamic>> newMat(M.data(),newRows,newCols);
+// (Deep) copy data of M
+MatrixXd xMat = MatrixXd::Map(M.data(), n, n);
+\end{lstlisting}
+
+
+\psection{Sizes, Rows, Cols, Resize}
+\begin{lstlisting}[language=C++]
+A.size() // total number of elements in matrix
+A.rows() // number of rows
+A.cols() // number of cols
+A.resize(10,100) // resized to 10 rows and 100 columns
+\end{lstlisting}
+
+
+\psection{Filling matrices}
+\begin{lstlisting}[language=C++]
+A << R,	v // can also be done using blocks. 
+u .transpose( ) ,  0;
+B << A, A, A;     // B is three horizontally stacked A's.
+A.fill(10);       // Fill A with all 10's.
+
+MatrixXd::Identity(rows,cols)          
+C.setIdentity(rows,cols)                 
+MatrixXd::Zero(rows,cols)                
+C.setZero(rows,cols)                      
+MatrixXd::Ones(rows,cols)          
+C.setOnes(rows,cols)                 
+MatrixXd::Random(rows,cols)  // uniform random numbers in (-1,1).
+C.setRandom(rows,cols)                 
+VectorXd::LinSpaced(size,low,high)        
+v.setLinSpaced(size,low,high)         
+VectorXi::LinSpaced(((hi-low)/step)+1, low,low+step*(size-1))
+\end{lstlisting}
+
+
+
+\psection{Reshaping using Map}
+\begin{lstlisting}[language=C++]
+// same data different shape
+Map<Matrix<TYPE, Dynamic , Dynamic>> newMat(M.data(),newRows,newCols);
+// (Deep) copy data of M
+MatrixXd xMat = MatrixXd::Map(M.data(), n, n);
+\end{lstlisting}
+
+
+\psection{Solving Equations}
+\begin{lstlisting}[language=C++]
+// Solve Ax = b. Result stored in x
+x = A.ldlt().solve(b));  // A sym. p.s.d.    #include <Eigen/Cholesky>
+x = A.llt() .solve(b));  // A sym. p.d.      #include <Eigen/Cholesky>
+x = A.lu()  .solve(b));  // Stable and fast. #include <Eigen/LU>
+x = A.qr()  .solve(b));  // No pivoting.     #include <Eigen/QR>
+x = A.svd() .solve(b));  // Stable, slowest. #include <Eigen/SVD>
+// .ldlt() -> .matrixL() and .matrixD()
+// .llt()  -> .matrixL()
+// .lu()   -> .matrixL() and .matrixU()
+// .qr()   -> .matrixQ() and .matrixR()
+// .svd()  -> .matrixU(), .singularValues(), and .matrixV()
+\end{lstlisting}
+
+\psection{Reductions}
+\begin{lstlisting}[language=C++]
+R.minCoeff()              
+R.maxCoeff()              
+s = R.minCoeff(&r, &c)   
+R.sum()                  
+R.colwise().sum()      
+R.prod()                
+R.rowwise().prod()        
+R.trace()                
+(a > 2).all() // if all a_i > 2 true             
+R.rowwise().all()     
+(a > 2).any()    // if any a_i > 2 true        
+(a > 2).count() // count a_i > 2 
+R.colwise().any()  
+x.norm()                 
+x.squaredNorm()       
+x.dot(y)                 
+x.cross(y)     //Requires #include <Eigen/Geometry>
+\end{lstlisting}
+
+
+\TODO{triangulare view etc, diagonal etc .}
+
+\TODO{sparse formats}
+\TODO{CRS / COO format}
+\TODO{triplet format and how to handle it}
+
+\section{Direct Methods for (Square) Linear Systems of Equations}
+
+\section{Direct Methods for Linear Least Squares}
+
+\section{Filtering Algorithms}
+
+\section{Data Interpolation and Data Fitting in 1D}
+
+\section{Approximating Functions in 1D}
+
+\section{Numerical Quadrature}
+
+\section{Iterative Methods for Non-Linear Systems of Equations}
+
+\section{Computation of Eigenvalues and Eigenvectors}
+
+\section{Krylov Methods for Linear Systems of Equations}
+
+\section{Numerical Integration - Single Step Methods}
+
+\section{Single Methods for Stiff Initial Value Problems}
+
+
+	
+
+%Example Listing
+\begin{lstlisting}[language=Python]
+def main():
+	return Null
+\end{lstlisting}
+
+
+\end{multicols}
+\end{document}
