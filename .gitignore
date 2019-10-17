@@ -21,6 +21,11 @@
 # *.eps
 # *.pdf
 
+<<<<<<< HEAD
+## Generated if empty string is given at "Please type another file name for output:"
+.pdf
+
+=======
 summary/summary.pdf
 
 
@@ -28,6 +33,7 @@ summary/summary.pdf
 .pdf
 
 
+>>>>>>> 7297d691b884b1121a17257aca54371b5f5a5dc5
 ## Bibliography auxiliary files (bibtex/biblatex/biber):
 *.bbl
 *.bcf
