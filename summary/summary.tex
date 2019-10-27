@@ -370,10 +370,23 @@ low rank rep
 
 	
 
+\section{Lambda Functions}
+\begin{lstlisting}[language=C++]
+  auto phi1 = [](int t){return 1/t;};
+  auto phi2 = [](int t){return 1/(t*t);};
+  auto phi3 = [](int t){return 1/t;};
+  auto phi4 = [](int t){return 1/t;};
+\end{lstlisting}
+
+
+
+
+
 %Example Listing
-\begin{lstlisting}[language=Python]
-def main():
-	return Null
+\begin{lstlisting}[language=c++]
+  auto phi1 = [](double t){return 1/t;};
+
+b.unaryExpr(phi1);
 \end{lstlisting}
 
 
