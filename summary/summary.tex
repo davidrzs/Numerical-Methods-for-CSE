@@ -154,7 +154,7 @@ MatrixXd::Ones(rows,cols)
 C.setOnes(rows,cols)                 
 MatrixXd::Random(rows,cols)  // uniform random numbers in (-1,1).
 C.setRandom(rows,cols)                 
-VectorXd::LinSpaced(size,low,high)        
+VectorXd::LinSpaced(size,low,high)       // includes lower and higher bound -> if size=1 only higher. 
 v.setLinSpaced(size,low,high)         
 VectorXi::LinSpaced(((hi-low)/step)+1, low,low+step*(size-1))
 \end{lstlisting}
@@ -220,6 +220,12 @@ x.cross(y)     //Requires #include <Eigen/Geometry>
 
 \TODO{TEMPLATE STUFF}
 \TODO{constructor in C++}
+
+
+\TODO{linspaced how to use}
+
+\TODO{timing 6.1 interpol -> see timing}
+
 
 \psection{Kronecker Product}
 \begin{lstlisting}
@@ -385,9 +391,44 @@ low rank rep
 %Example Listing
 \begin{lstlisting}[language=c++]
   auto phi1 = [](double t){return 1/t;};
-
-b.unaryExpr(phi1);
+  b = b.unaryExpr(phi1);
 \end{lstlisting}
+
+
+
+%std vector to vectorxd
+\begin{lstlisting}[language=c++]
+std: :vector<double> t {12};
+Map<VectorXd> te (t.data(),t.size());
+\end{lstlisting}
+
+
+
+https://stackoverflow.com/questions/46809901/lambda-captures
+
+
+
+
+
+% matplotlibcpp
+\begin{lstlisting}
+VectorXd tf1,tf2;// nodes for f1 resp. f
+std: :vector<double> ef1 ,  ef2 ;// errors for f1 resp. f21718t f 1 =a d a p t i v e p o l y i n t p( f1 , a , b ,  tol , N, &ef1 ) ;19t f 2 =a d a p t i v e p o l y i n t p( f2 , a , b ,  tol , N, &ef2 ) ;20VectorXdn1 =VectorXd: :LinSpaced( ef1 .s i z e( ) ,1 , ef1 .s i z e( ) ) ;
+VectorXd n2 = VectorXd::LinSpaced( ef2 .s i z e( ) ,1 , ef2.size());
+plt::figure ( ) ;
+plt::title(" Error VS step") ;
+plt::xlabel ("No. of interpolation nodes") ;
+plt::ylabel ("sdsd");
+plt::semilogy (n1 , ef1 ," ro",   { {" label","f1(t) =sin(e2t)"} } ) ;
+plt::semilogy (n2 , ef2 ,"bo",  { {" label","f2(t) =sqrtt/(1+16t2)"} } ) ;
+plt::legend();
+plt::savefig(" . / cx_out/ intperrplot.png");
+\end{lstlisting}
+
+
+
+
+
 
 
 \end{multicols}
