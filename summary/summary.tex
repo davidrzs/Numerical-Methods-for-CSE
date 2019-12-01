@@ -260,6 +260,21 @@ X.setFromTriplets(tripletVec.begin(), tripletVec.end());
 X.makeCompressed();
 \end{lstlisting}
 
+
+
+\psection{Solving Linear Equations with Sparse Matrices}
+\begin{lstlisting}[language=C++]
+Eigen::SparseMatrix<double> A(n,n);
+A.reserve(3*n);
+for(;;){
+	A.insert(i,i-1) = 100;
+}
+A.makeCompressed(); // VERY IMPORTANT
+Eigen::SparseLU<Eigen::SparseMatrix<double>> Ax_lu(A) 
+newX = Ax_lu .solve(b);
+\end{lstlisting}
+
+
 \psection{Using sparse matrixes}
 \begin{lstlisting}[language=c++]
 	//now we loop over every non zero entry of M (for the left hand size of the kronecker product)
@@ -407,7 +422,7 @@ Map<VectorXd> te (t.data(),t.size());
 https://stackoverflow.com/questions/46809901/lambda-captures
 
 
-
+add integration rules -> substitution
 
 
 % matplotlibcpp
