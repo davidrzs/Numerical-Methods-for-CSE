@@ -44,6 +44,13 @@
 \usepackage{inconsolata}
 
 
+\usepackage[framemethod=TikZ]{mdframed}
+\newenvironment{method}[1]{\begin{mdframed}[backgroundcolor=blue!10,innertopmargin=15pt, innerbottommargin=15pt, nobreak=true]
+		\textbf{#1 }
+	}
+	{ 
+	\end{mdframed}
+}
 
 
 \definecolor{background}{HTML}{FAFAFA}
@@ -367,6 +374,68 @@ Example:\begin{align*}
 
 \section{Singular Value Decompostion}
 low rank rep
+
+
+
+
+
+\section{Data Interpolation and Fitting (Chapter 5)}
+
+
+There are three main approaches:
+
+\begin{itemize}
+	\item Using Vandermonde Matrix $\rightarrow$ never do this. Very badly conditioned matrix.
+	\item \textbf{Lagrange} Good choice, use Barycentric if interested in coeffs, if only need one eval use Aitken-Neville.
+	\item \textbf{Newton} If we dynamically add new data (update friendly) (5.2.3.23)
+\end{itemize}
+
+
+\textbf{Extraplation to 0}: Works really well if $\phi(t) = \phi(-t)$, we use Aitken-Neville on extrapolation point.
+
+
+\TODO{local interpolation}
+
+
+
+
+\section{Function Approximation (Chapter 6)}
+
+Approximation is the combination of an interpolation scheme and sampling. We get to choose where to evaluate the function $f$.
+
+\begin{method}{Jackson's Theorem (6.1.1.11)}
+	If $f\in C^r([-1,1])$ ($r\in \mathbb{N}$ times continuously differentiable), then for any polynomial of degree $n \geq r$
+	\begin{align*}
+		\inf_{p \in \mathcal{P}} || f-p ||_{L^\infty [(-1,1)]} \leq (1 + \frac{\pi^2}{2})^r \frac{(n-r)!}{n!} || f^{(r)} ||_{L^\infty [(-1,1)]}
+	\end{align*}
+\end{method}
+
+We can also apply Jackson's Theorem to any interval using Lemma 6.1.1.20
+
+
+
+\psection{Convergence}
+
+
+\begin{itemize}
+\item Algebraic Convergence: data on line in log-log plot, $\exists p > 0:$  $T(n) \leq n^{-p}$
+
+\item Exponential Convergence: data on line in lin-log plot , $\exists 0 < q < 1:$  $T(n) \leq q^n$
+
+\end{itemize}
+
+
+
+
+\section{Quadrature (Chapter 7)}
+
+
+Basic Idea. We would like to approximate $\int_{a}^{b} f(x) dx$. 
+
+For this we use a quadrature rule \TODO{add stuff}
+
+
+\newpage
 
 \section{Direct Methods for Linear Least Squares}
 
