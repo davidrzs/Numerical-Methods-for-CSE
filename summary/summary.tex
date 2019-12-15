@@ -497,17 +497,58 @@ add integration rules -> substitution
 % matplotlibcpp
 \begin{lstlisting}
 VectorXd tf1,tf2;// nodes for f1 resp. f
-std: :vector<double> ef1 ,  ef2 ;// errors for f1 resp. f21718t f 1 =a d a p t i v e p o l y i n t p( f1 , a , b ,  tol , N, &ef1 ) ;19t f 2 =a d a p t i v e p o l y i n t p( f2 , a , b ,  tol , N, &ef2 ) ;20VectorXdn1 =VectorXd: :LinSpaced( ef1 .s i z e( ) ,1 , ef1 .s i z e( ) ) ;
-VectorXd n2 = VectorXd::LinSpaced( ef2 .s i z e( ) ,1 , ef2.size());
-plt::figure ( ) ;
-plt::title(" Error VS step") ;
-plt::xlabel ("No. of interpolation nodes") ;
-plt::ylabel ("sdsd");
-plt::semilogy (n1 , ef1 ," ro",   { {" label","f1(t) =sin(e2t)"} } ) ;
-plt::semilogy (n2 , ef2 ,"bo",  { {" label","f2(t) =sqrtt/(1+16t2)"} } ) ;
+std::vector<double> ef1 , ef2 ;// errors for f1 resp. f2
+tf1 = adaptivepolyintp(f1,a,b,tol,N,&ef1);
+tf2 = adaptivepolyintp(f2,a,b,tol,N,&ef2);
+VectorXd n1 = VectorXd::LinSpaced(ef1.size(),1,ef1.size());
+VectorXd n2 = VectorXd::LinSpaced(ef2.size(),1,ef2.size());
+plt::figure();
+plt::title("Error VS step") ;
+plt::xlabel("No. of interpolation nodes") ;
+plt::ylabel("sdsd");
+plt::semilogy(n1,ef1,"ro",{ {" label","f1(t) =sin(e2t)"}});
+plt::semilogy(n2,ef2,"bo",{{"label","f2(t)=sqrtt/(1+16t2)"}});
 plt::legend();
-plt::savefig(" . / cx_out/ intperrplot.png");
+plt::savefig("./cx_out/intperrplot.png");
 \end{lstlisting}
+
+
+
+
+
+\section{Differential Equations}
+
+
+\psection{Runge Kutta Methods}
+
+We have the IVP  $\dot{\vec{y}} = \vec{f}(t,\vec{y})$, $\vec{y}(t_0) = \vec{y_0}$. We can write $\vec{y_1}$ as $$\vec{y}(t_1) = \vec{y_0} + \int_{t_0}^{t_1} \vec{f}(\tau, \vec{y}(\tau)) d\tau $$
+giving us
+$$
+\vec{y}(t_1) \approx \vec{y_0} + h\sum_{i=1}^{s} b_i \vec{f}(t_0 + c_i h , \vec{y}(t_0 + c_i h))
+$$
+
+
+\psection{Butcher Scheme}
+We call a single step Runge Kutta method consistent iff. 
+\begin{align*}
+	\begin{array}
+	{c|ccccc}
+	\vec{c} &  \Theta \\
+	\hline
+	& \vec{b}^T
+	\end{array} &:= 
+	\begin{array}{c|cccc}
+	c_1 &  0 & \ldots & \ldots & 0  \\
+	c_2 &  a_{21} & \ddots &\ddots & \vdots\\
+	\vdots & \vdots& \ddots & \ddots & \vdots \\
+	c_s & a_{s1} & \ldots & a_{s,s_1} & 0\\
+	\hline
+	& b_1 &\ldots & \ldots b_{s-1} & b_s
+	\end{array} 
+\end{align*}
+
+
+Now we can use quadrature methods to approximate the integral.
 
 
 
