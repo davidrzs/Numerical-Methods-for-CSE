@@ -449,9 +449,6 @@ For this we use a quadrature rule \TODO{add stuff}
 
 \section{Iterative Methods for Non-Linear Systems of Equations}
 
-\section{Computation of Eigenvalues and Eigenvectors}
-
-\section{Krylov Methods for Linear Systems of Equations}
 
 \section{Numerical Integration - Single Step Methods}
 
@@ -460,27 +457,34 @@ For this we use a quadrature rule \TODO{add stuff}
 
 	
 
-\section{Lambda Functions}
+\section*{Lambda Functions}
+\psection{Lambda Functions \& Applying Coefficient wise}
 \begin{lstlisting}[language=C++]
-  auto phi1 = [](int t){return 1/t;};
-  auto phi2 = [](int t){return 1/(t*t);};
-  auto phi3 = [](int t){return 1/t;};
-  auto phi4 = [](int t){return 1/t;};
+auto phi1 = [](int t) -> double {return 1/t;};
+auto phi2 = [](int t){return 1/(t*t);};
+b = b.unaryExpr(phi1);
 \end{lstlisting}
 
 
-
-
-
-%Example Listing
 \begin{lstlisting}[language=c++]
-  auto phi1 = [](double t){return 1/t;};
-  b = b.unaryExpr(phi1);
+#include <functional>
+int main(){
+	std::function<double(int)>  f = [](int l){
+		return l + 3.14;
+	};
+	std::cout << f(2);
+}
 \end{lstlisting}
 
 
 
-%std vector to vectorxd
+
+
+\section*{Using \texttt{std::vector<...>}}
+
+
+\psection{Turn \texttt{std::vector<...>} to \texttt{VectorXd}}
+
 \begin{lstlisting}[language=c++]
 std: :vector<double> t {12};
 Map<VectorXd> te (t.data(),t.size());
@@ -494,9 +498,11 @@ https://stackoverflow.com/questions/46809901/lambda-captures
 add integration rules -> substitution
 
 
+
+\section{Mathplotlib Plotting}
 % matplotlibcpp
 \begin{lstlisting}
-VectorXd tf1,tf2;// nodes for f1 resp. f
+VectorXd ,tf2;// nodes for f1 resp. f
 std::vector<double> ef1 , ef2 ;// errors for f1 resp. f2
 tf1 = adaptivepolyintp(f1,a,b,tol,N,&ef1);
 tf2 = adaptivepolyintp(f2,a,b,tol,N,&ef2);
@@ -518,6 +524,23 @@ plt::savefig("./cx_out/intperrplot.png");
 
 \section{Differential Equations}
 
+\psection{Transforming to autonomous 1st order ODE}
+
+Assume we have $y'' = -g\sin(y)$, we define $u_1 = y$ and $u_2 = y'$. This yields:
+\begin{align*}
+	\vec{u} &= \begin{pmatrix}
+	u_1 \\ u_2
+	\end{pmatrix} = \begin{pmatrix}
+	y \\ y'
+	\end{pmatrix} & f(t,\vec{u}) = \begin{pmatrix}
+	u_2 \\ -g\sin(u_1)
+	\end{pmatrix} = \begin{pmatrix}
+	u_1 '\\ u_2 '
+	\end{pmatrix} = \vec{u}'
+\end{align*}
+
+
+We can also get rid of a dependence on $t$ (make autonomous): 
 
 \psection{Runge Kutta Methods}
 
@@ -526,7 +549,6 @@ giving us
 $$
 \vec{y}(t_1) \approx \vec{y_0} + h\sum_{i=1}^{s} b_i \vec{f}(t_0 + c_i h , \vec{y}(t_0 + c_i h))
 $$
-
 
 \psection{Butcher Scheme}
 We call a single step Runge Kutta method consistent iff. 
@@ -547,8 +569,14 @@ We call a single step Runge Kutta method consistent iff.
 	\end{array} 
 \end{align*}
 
+\psection{Find Order of Convergence of Runge-Kutta}
+\begin{lstlisting}[language=c++]
+VectorXd coeffs = polyfit(nArr.array().log(), err.array().log(),1); 
+conv_rate = -coeffs(0);
+\end{lstlisting}
 
-Now we can use quadrature methods to approximate the integral.
+
+
 
 
 
