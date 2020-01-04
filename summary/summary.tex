@@ -181,10 +181,10 @@ MatrixXd xMat = MatrixXd::Map(M.data(), n, n);
 \begin{lstlisting}[language=C++]
 // Solve Ax = b. Result stored in x
 x = A.ldlt().solve(b));  // A sym. p.s.d.    #include <Eigen/Cholesky>
-x = A.llt() .solve(b));  // A sym. p.d.      #include <Eigen/Cholesky>
-x = A.lu()  .solve(b));  // Stable and fast. #include <Eigen/LU>
-x = A.qr()  .solve(b));  // No pivoting.     #include <Eigen/QR>
-x = A.svd() .solve(b));  // Stable, slowest. #include <Eigen/SVD>
+x = A.llt().solve(b));  // A sym. p.d.      #include <Eigen/Cholesky>
+x = A.lu().solve(b));  // Stable and fast. #include <Eigen/LU>
+x = A.qr().solve(b));  // No pivoting.     #include <Eigen/QR>
+x = A.svd().solve(b));  // Stable, slowest. #include <Eigen/SVD>
 // .ldlt() -> .matrixL() and .matrixD()
 // .llt()  -> .matrixL()
 // .lu()   -> .matrixL() and .matrixU()
@@ -225,8 +225,6 @@ x.cross(y)     //Requires #include <Eigen/Geometry>
 \TODO{sparse formats}
 \TODO{CRS / COO format}
 
-\TODO{TEMPLATE STUFF}
-\TODO{constructor in C++}
 
 
 \TODO{linspaced how to use}
@@ -379,7 +377,7 @@ low rank rep
 
 
 
-\section{Data Interpolation and Fitting (Chapter 5)}
+\section*{Data Interpolation and Fitting (Chapter 5)}
 
 
 There are three main approaches:
@@ -433,26 +431,6 @@ We can also apply Jackson's Theorem to any interval using Lemma 6.1.1.20
 Basic Idea. We would like to approximate $\int_{a}^{b} f(x) dx$. 
 
 For this we use a quadrature rule \TODO{add stuff}
-
-
-\newpage
-
-\section{Direct Methods for Linear Least Squares}
-
-\section{Filtering Algorithms}
-
-\section{Data Interpolation and Data Fitting in 1D}
-
-\section{Approximating Functions in 1D}
-
-\section{Numerical Quadrature}
-
-\section{Iterative Methods for Non-Linear Systems of Equations}
-
-
-\section{Numerical Integration - Single Step Methods}
-
-\section{Single Methods for Stiff Initial Value Problems}
 
 
 \section*{\texttt{C++} Objects - Initializer Lists}
@@ -600,6 +578,11 @@ plt::grid("True");
 plt::savefig("./cx_out/fileName.png");
 \end{lstlisting}
 
+
+\section*{Scientific Notation in C++}
+
+The number \texttt{42030} can also be seen as \texttt{4.203e4} since we shift the decimal point 4 places to the left. Analogous with shifting to the right.
+
 \section*{Differential Equations}
 
 \psection{Transforming to autonomous 1st order ODE}
@@ -668,10 +651,13 @@ conv_rate = -coeffs(0);
 
 
 
+
 \TODO{https://stackoverflow.com/questions/46809901/lambda-captures
 	
 	add integration rules -> substitution
 }
+
+
 
 
 
