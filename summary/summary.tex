@@ -455,7 +455,66 @@ For this we use a quadrature rule \TODO{add stuff}
 \section{Single Methods for Stiff Initial Value Problems}
 
 
+\section*{\texttt{C++} Objects - Initializer Lists}
+
+
+
+\begin{lstlisting}[language=c++]
+class Point { 
+private: 
+int x; 
+int y; 
+public: 
+Point(int i = 0, int j = 0):x(i), y(j) {}  
+/*  The above use of Initializer list is optional as the  
+constructor can also be written as: 
+Point(int i = 0, int j = 0) { 
+x = i; 
+y = j; 
+} 
+*/    
+
+int getX() const {return x;} 
+int getY() const {return y;} 
+}; 
+\end{lstlisting}
+
+\section*{Generics}
+
+\psection{Functions and Generics}
+\begin{lstlisting}[language=c++]
+template <typename T> 
+T mx(T x, T y){ 
+	return (x > y) ? x : y; 
+} 
+
+int main() { 
+	cout << mx<int>(3, 7) << mx<double>(3.0, 7.0) << mx<char>('g', 'e'); 
+	return 0; 
+} 
+
+\end{lstlisting}
+
+\psection{Classes and Generics}
+\begin{lstlisting}[language=c++]
+template <typename T, typename U> 
+	class A { 
+		T x; 
+		U y; 
 	
+	public: 
+		A() { cout << "constructor";} 
+}; 
+
+int main() { 
+	A<char, char> a; 
+	A<int, double> b; 
+} 
+
+\end{lstlisting}
+
+
+
 
 \section*{Lambda Functions}
 \psection{Lambda Functions \& Applying Coefficient wise}
@@ -490,39 +549,58 @@ std: :vector<double> t {12};
 Map<VectorXd> te (t.data(),t.size());
 \end{lstlisting}
 
+\psection{General Usage}
+
+\begin{lstlisting}[language=c++]
+#include <vector>
+std::vector<int> M {10,20,40,80,160,320,640,1280};
+
+vector<int> g1; 
+g1.push_back(123); 
+g1.size(); 
+g1.resize(4); 
+g1.reserve(100);
+cout << g1[2];
+\end{lstlisting}
 
 
-https://stackoverflow.com/questions/46809901/lambda-captures
 
-
-add integration rules -> substitution
-
-
-
-\section{Mathplotlib Plotting}
-% matplotlibcpp
-\begin{lstlisting}
-VectorXd ,tf2;// nodes for f1 resp. f
-std::vector<double> ef1 , ef2 ;// errors for f1 resp. f2
-tf1 = adaptivepolyintp(f1,a,b,tol,N,&ef1);
-tf2 = adaptivepolyintp(f2,a,b,tol,N,&ef2);
-VectorXd n1 = VectorXd::LinSpaced(ef1.size(),1,ef1.size());
-VectorXd n2 = VectorXd::LinSpaced(ef2.size(),1,ef2.size());
-plt::figure();
-plt::title("Error VS step") ;
-plt::xlabel("No. of interpolation nodes") ;
-plt::ylabel("sdsd");
-plt::semilogy(n1,ef1,"ro",{ {" label","f1(t) =sin(e2t)"}});
-plt::semilogy(n2,ef2,"bo",{{"label","f2(t)=sqrtt/(1+16t2)"}});
-plt::legend();
-plt::savefig("./cx_out/intperrplot.png");
+\section*{Using \texttt{std::pair<...,...>}}
+\begin{lstlisting}[language=c++]
+#include <utility>
+std::pair<int, char> pr1; 
+pr2 = make_pair("some text",4.56); 
+pr1.first = 100; 
+pr2.second = 'G' ; 
+std::cout << pr1.first << " " << pr1.second ; 
 \end{lstlisting}
 
 
 
 
 
-\section{Differential Equations}
+\section*{Mathplotlib Plotting}
+
+% matplotlibcpp
+\begin{lstlisting}[language=c++]
+// plotting results
+plt::figure();
+plt::plot(t, y, "+", {{"label", "approx IVP"}});
+// exact solution 
+VectorXd x = Vector::LinSpaced(100,0.0,T);
+VectorXd exact = x.array().tan();
+plt::plot(x, exact, {{"label", "tangent"}}  );
+plt::legend();
+
+plt::title("Approximate vs exact solution");
+plt::xlabel("t");
+plt::ylabel("y");
+plt::grid("True");
+
+plt::savefig("./cx_out/fileName.png");
+\end{lstlisting}
+
+\section*{Differential Equations}
 
 \psection{Transforming to autonomous 1st order ODE}
 
@@ -540,7 +618,20 @@ Assume we have $y'' = -g\sin(y)$, we define $u_1 = y$ and $u_2 = y'$. This yield
 \end{align*}
 
 
-We can also get rid of a dependence on $t$ (make autonomous): 
+We can also get rid of a dependence on $t$ (make autonomous): Assume we have $y' = -y + \cos(t)$. We define $v_1 = y$ and $v_2 = t$, this yields:
+\begin{align*}
+	\vec{v} &= \begin{pmatrix}
+		v_1 \\ v_2
+	\end{pmatrix} = \begin{pmatrix}
+		y \\ t
+	\end{pmatrix} & f(\vec{v}) = \begin{pmatrix}
+		-v_1 + \cos(v_2) \\ 1
+	\end{pmatrix} = \begin{pmatrix}
+		v_1 '\\ v_2 '
+	\end{pmatrix} = \vec{v}'
+\end{align*}
+
+
 
 \psection{Runge Kutta Methods}
 
@@ -576,6 +667,11 @@ conv_rate = -coeffs(0);
 \end{lstlisting}
 
 
+
+\TODO{https://stackoverflow.com/questions/46809901/lambda-captures
+	
+	add integration rules -> substitution
+}
 
 
 
