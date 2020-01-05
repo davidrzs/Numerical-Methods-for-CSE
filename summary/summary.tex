@@ -347,10 +347,22 @@ x = A.svd().solve(b));  // Stable, slowest. #include <Eigen/SVD>
 // .svd()  -> .matrixU(), .singularValues(), and .matrixV()
 \end{lstlisting}
 
+\psection{Block}
+
+Block of size (p,q), starting at (i,j) is \texttt{A.block(i,j,p,q);}
+
+
 \psection{Triangular Views}
 We have the following options \texttt{Upper, Lower, StrictlyUpper, StrictlyLower, UnitUpper, UnitLower}
-\begin{lstlisting}
-	MatrixXd m2 = m.triangularView<Xxx>();
+\begin{lstlisting}[language=C++]
+MatrixXd m2 = m.triangularView<Xxx>();
+\end{lstlisting}
+
+\psection{Diagonal}
+\begin{lstlisting}[language=C++]
+A = MatrixXd::Constant(n,n,0); // initialization is necessary
+vec1 = mat1.diagonal();
+mat1.diagonal() = vec1;
 \end{lstlisting}
 
 \psection{Reductions}
@@ -375,7 +387,7 @@ x.cross(y)     //Requires #include <Eigen/Geometry>
 \end{lstlisting}
 
 
-\TODO{triangulare view etc, diagonal etc .}
+
 
 \TODO{sparse formats}
 \TODO{CRS / COO format}
@@ -394,7 +406,6 @@ x.cross(y)     //Requires #include <Eigen/Geometry>
 
 \section*{Sparse Matrices}
 
-\TODO{nnz arithmetics}
 \psection{NNZ Arithmetics}
 Es gilt:
 
@@ -763,18 +774,6 @@ conv_rate = -coeffs(0);
 
 
 
-
-\TODO{https://stackoverflow.com/questions/46809901/lambda-captures
-	
-	add integration rules -> substitution
-}
-
-
-
-
-
-\TODO{add matrix multiplication formula using sums}
-\TODO{cholesky decomposition}
 
 
 \section*{Integrale Ausrechnen}
