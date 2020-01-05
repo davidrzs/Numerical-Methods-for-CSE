@@ -18,6 +18,9 @@
 \renewcommand{\familydefault}{\rmdefault}
 \usepackage{eulervm}
 
+% for nice tableas
+\usepackage{booktabs}
+
 % so we have more space between matrix entries
 \setlength{\arraycolsep}{12pt}
 
@@ -44,7 +47,7 @@
 \usepackage{inconsolata}
 
 
-\usepackage[framemethod=TikZ]{mdframed}
+\usepackage{mdframed}
 \newenvironment{method}[1]{\begin{mdframed}[backgroundcolor=blue!10,innertopmargin=15pt, innerbottommargin=15pt, nobreak=true]
 		\textbf{#1 }
 	}
@@ -115,7 +118,9 @@
 \author{\large{David Zollikofer}}
 %END TITLE
 
-
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
 \newcommand{\psection}[1]{\par \textbf{\large#1}}
 
 \begin{document}
@@ -126,334 +131,29 @@
 
 
 \begin{multicols}{2}
-\section{Eigen \& C++}
-
-\psection{Constructing Matrices and Vectors}
-\begin{lstlisting}[language=C++]
-// same data different shape
-Map<Matrix<TYPE, Dynamic , Dynamic>> newMat(M.data(),newRows,newCols);
-// (Deep) copy data of M
-MatrixXd xMat = MatrixXd::Map(M.data(), n, n);
-\end{lstlisting}
-
-
-\psection{Sizes, Rows, Cols, Resize}
-\begin{lstlisting}[language=C++]
-A.size() // total number of elements in matrix
-A.rows() // number of rows
-A.cols() // number of cols
-A.resize(10,100) // resized to 10 rows and 100 columns
-\end{lstlisting}
-
-
-\psection{Filling matrices}
-\begin{lstlisting}[language=C++]
-A << R,	v // can also be done using blocks. 
-u .transpose( ) ,  0;
-B << A, A, A;     // B is three horizontally stacked A's.
-A.fill(10);       // Fill A with all 10's.
-
-MatrixXd::Identity(rows,cols)          
-C.setIdentity(rows,cols)                 
-MatrixXd::Zero(rows,cols)                
-C.setZero(rows,cols)                      
-MatrixXd::Ones(rows,cols)          
-C.setOnes(rows,cols)                 
-MatrixXd::Random(rows,cols)  // uniform random numbers in (-1,1).
-C.setRandom(rows,cols)                 
-VectorXd::LinSpaced(size,low,high)       // includes lower and higher bound -> if size=1 only higher. 
-v.setLinSpaced(size,low,high)         
-VectorXi::LinSpaced(((hi-low)/step)+1, low,low+step*(size-1))
-\end{lstlisting}
-
-
-
-\psection{Reshaping using Map}
-\begin{lstlisting}[language=C++]
-// same data different shape
-Map<Matrix<TYPE, Dynamic , Dynamic>> newMat(M.data(),newRows,newCols);
-// (Deep) copy data of M
-MatrixXd xMat = MatrixXd::Map(M.data(), n, n);
-\end{lstlisting}
-
-
-\psection{Solving Equations}
-\begin{lstlisting}[language=C++]
-// Solve Ax = b. Result stored in x
-x = A.ldlt().solve(b));  // A sym. p.s.d.    #include <Eigen/Cholesky>
-x = A.llt().solve(b));  // A sym. p.d.      #include <Eigen/Cholesky>
-x = A.lu().solve(b));  // Stable and fast. #include <Eigen/LU>
-x = A.qr().solve(b));  // No pivoting.     #include <Eigen/QR>
-x = A.svd().solve(b));  // Stable, slowest. #include <Eigen/SVD>
-// .ldlt() -> .matrixL() and .matrixD()
-// .llt()  -> .matrixL()
-// .lu()   -> .matrixL() and .matrixU()
-// .qr()   -> .matrixQ() and .matrixR()
-// .svd()  -> .matrixU(), .singularValues(), and .matrixV()
-\end{lstlisting}
-
-\psection{Triangular Views}
-We have the following options \texttt{Upper, Lower, StrictlyUpper, StrictlyLower, UnitUpper, UnitLower}
-\begin{lstlisting}
-	MatrixXd m2 = m.triangularView<Xxx>();
-\end{lstlisting}
-
-\psection{Reductions}
-\begin{lstlisting}[language=C++]
-R.minCoeff()              
-R.maxCoeff()              
-s = R.minCoeff(&r, &c)   
-R.sum()                  
-R.colwise().sum()      
-R.prod()                
-R.rowwise().prod()        
-R.trace()                
-(a > 2).all() // if all a_i > 2 true             
-R.rowwise().all()     
-(a > 2).any()    // if any a_i > 2 true        
-(a > 2).count() // count a_i > 2 
-R.colwise().any()  
-x.norm()                 
-x.squaredNorm()       
-x.dot(y)                 
-x.cross(y)     //Requires #include <Eigen/Geometry>
-\end{lstlisting}
-
-
-\TODO{triangulare view etc, diagonal etc .}
-
-\TODO{sparse formats}
-\TODO{CRS / COO format}
-
-
-
-\TODO{linspaced how to use}
-
-\TODO{timing 6.1 interpol -> see timing}
-
-
-\psection{Kronecker Product}
-\begin{lstlisting}
-	C = kroneckerProduct(A,B).eval();
-\end{lstlisting}
-
-
-\section{Sparse Matrices}
-\TODO{add matrix multiplication formula using sums}
-\TODO{cholesky decomposition}
-
-\TODO{nnz arithmetics}
-\psection{NNZ Arithmetics}
-Es gilt:
-
-
-\TODO{unary expression}
-
-\psection{Defining sparse matrices}
-\begin{lstlisting}[language=C++]
-#include <Eigen/Sparse>
-SparseMatrix<double> mat(rows,cols);
-
-std::vector<Triplet<double>> tripletVec;
-tripletVec.reserve(n);
-for(int i = 0; i < n; i++){
-double val = 2;
-Triplet<double> newTriplet(row,col,val);
-tripletVec.push_back(newTriplet);
-}
-X.setFromTriplets(tripletVec.begin(), tripletVec.end());
-X.makeCompressed();
-\end{lstlisting}
-
-
-
-\psection{Solving Linear Equations with Sparse Matrices}
-\begin{lstlisting}[language=C++]
-Eigen::SparseMatrix<double> A(n,n);
-A.reserve(3*n);
-for(;;){
-	A.insert(i,i-1) = 100;
-}
-A.makeCompressed(); // VERY IMPORTANT
-Eigen::SparseLU<Eigen::SparseMatrix<double>> Ax_lu(A) 
-newX = Ax_lu .solve(b);
-\end{lstlisting}
-
-
-\psection{Using sparse matrixes}
-\begin{lstlisting}[language=c++]
-	//now we loop over every non zero entry of M (for the left hand size of the kronecker product)
-	// loop over every column
-	for(int i = 0; i < n;i++){
-		// we loop as long as there are still elements in the column
-		// we get the pointer to where the column starts and loop for as long as elements still are in this column
-		for(int index = colPointer[i]; index < colPointer[i+1] ; index++){
-			// we are now at the nonzero element in row "i" and column "j" and value "outerValue".
-			int outerRow = rowPointer[index];
-			int outerColumn = i;
-			double outerValue = values[index];
-			
-			// now we need to loop over all of M again to add the block to the kronecker matrix
-			
-			for(int innerI = 0; innerI < n;innerI++){
-				// we loop as long as there are still elements in the row
-				for(int innerIndex = colPointer[innerI]; innerIndex < colPointer[innerI+1] ; innerIndex++){
-					
-					int innerRow = rowPointer[innerIndex];
-					int innerColumn = innerI;
-					double innerValue = values[innerIndex];
-					
-					
-					Triplet<double> toAdd(n*outerRow+innerRow,n*outerColumn+innerColumn,outerValue*innerValue);
-					bVec.push_back(toAdd);
-				}
-			}
-		}
-	}
-\end{lstlisting}
-
-\section{QR Decompositions}
-\psection{Givens Rotation}
-See \texttt{3.3.3.14} as well as \texttt{3.3.3.20}
-
-\TODO{add different mehods}
-
-
-
-\section{Least Squares}
-
-\psection{Solving Least Squares Problems}
-\begin{lstlisting}[language=c++]
-JacobiSVD<MatrixXd> svd(A,ComputeThinU | ComputeThinV);
-VectorXd solution = svd.solve(b);
-\end{lstlisting}
-\psection{Constrained Least Squares (3.6)}
-Assume we want to minimize $|| Ax-b ||_2$ under the constraint $Cx = d$. We use Lagrangian multipliers and get the \textit{augmented normal equations}:
-\begin{align*}
-	  \begin{bmatrix}
-	\vec{A}^T\vec{A} & \vec{C}^T \\ 
-\vec{C} & 0 
-	\end{bmatrix} \begin{bmatrix}
-	\vec{x} \\ \vec{m} 
-	\end{bmatrix} &= \begin{bmatrix}
-	\vec{A}^T \vec{b}\\ \vec{d}
-	\end{bmatrix}
-\end{align*}
-Alternatively we can also use the extended normal equations and get
-\begin{align*}
-\begin{bmatrix}
-\vec{-I} & \vec{A} & 0\\
-\vec{A}^T & 0 & \vec{C}^T\\
-0 & \vec{C} & 0 
-\end{bmatrix}
-\begin{bmatrix}
-\vec{r} \\ \vec{x} \\ \vec{m} 
-\end{bmatrix} &=
-\begin{bmatrix}
-\vec{b}\\ 0 \\ \vec{d}
-\end{bmatrix}
-\end{align*}
-
-
-\section{Gaussian Block Elimination}
-Example:\begin{align*}
-\begin{bmatrix}
-\vec{\mathbb{1}} & \vec{C^T} \\
-\vec{C} & \vec{0}
-\end{bmatrix} \cdot \begin{bmatrix}
-\vec{x} \\ \vec{m}
-\end{bmatrix} &= \begin{bmatrix}
-\vec{0} \\ \vec{g}
-\end{bmatrix}\\
-\Rightarrow \vec{1\cdot x} + \vec{C^T\cdot m} &= \vec{0} \Rightarrow -\vec{C^T}\vec{m} = \vec{x}\\
-\Rightarrow \vec{C x} &= \vec{g} \\
-\Rightarrow \vec{-C}\cdot( \vec{C^Tm}) &= \vec{g}
-\end{align*}
-
-\section{Singular Value Decompostion}
-low rank rep
-
-
-
-
-
-\section*{Data Interpolation and Fitting (Chapter 5)}
-
-
-There are three main approaches:
-
-\begin{itemize}
-	\item Using Vandermonde Matrix $\rightarrow$ never do this. Very badly conditioned matrix.
-	\item \textbf{Lagrange} Good choice, use Barycentric if interested in coeffs, if only need one eval use Aitken-Neville.
-	\item \textbf{Newton} If we dynamically add new data (update friendly) (5.2.3.23)
-\end{itemize}
-
-
-\textbf{Extraplation to 0}: Works really well if $\phi(t) = \phi(-t)$, we use Aitken-Neville on extrapolation point.
-
-
-\TODO{local interpolation}
-
-
-
-
-\section{Function Approximation (Chapter 6)}
-
-Approximation is the combination of an interpolation scheme and sampling. We get to choose where to evaluate the function $f$.
-
-\begin{method}{Jackson's Theorem (6.1.1.11)}
-	If $f\in C^r([-1,1])$ ($r\in \mathbb{N}$ times continuously differentiable), then for any polynomial of degree $n \geq r$
-	\begin{align*}
-		\inf_{p \in \mathcal{P}} || f-p ||_{L^\infty [(-1,1)]} \leq (1 + \frac{\pi^2}{2})^r \frac{(n-r)!}{n!} || f^{(r)} ||_{L^\infty [(-1,1)]}
-	\end{align*}
-\end{method}
-
-We can also apply Jackson's Theorem to any interval using Lemma 6.1.1.20
-
-
-
-\psection{Convergence}
-
-
-\begin{itemize}
-\item Algebraic Convergence: data on line in log-log plot, $\exists p > 0:$  $T(n) \leq n^{-p}$
-
-\item Exponential Convergence: data on line in lin-log plot , $\exists 0 < q < 1:$  $T(n) \leq q^n$
-
-\end{itemize}
-
-
-
-
-\section{Quadrature (Chapter 7)}
-
-
-Basic Idea. We would like to approximate $\int_{a}^{b} f(x) dx$. 
-
-For this we use a quadrature rule \TODO{add stuff}
-
-
+	
+	
 \section*{\texttt{C++} Objects - Initializer Lists}
 
 
 
 \begin{lstlisting}[language=c++]
 class Point { 
-private: 
-int x; 
-int y; 
-public: 
-Point(int i = 0, int j = 0):x(i), y(j) {}  
-/*  The above use of Initializer list is optional as the  
-constructor can also be written as: 
-Point(int i = 0, int j = 0) { 
-x = i; 
-y = j; 
-} 
-*/    
-
-int getX() const {return x;} 
-int getY() const {return y;} 
+	private: 
+		int x; 
+		int y; 
+	public: 
+		Point(int i = 0, int j = 0):x(i), y(j) {}  
+			/*  The above use of Initializer list is optional as the  
+			constructor can also be written as: 
+			Point(int i = 0, int j = 0) { 
+			x = i; 
+			y = j; 
+		} 
+	*/    
+	
+	int getX() const {return x;} 
+	int getY() const {return y;} 
 }; 
 \end{lstlisting}
 
@@ -476,9 +176,9 @@ int main() {
 \psection{Classes and Generics}
 \begin{lstlisting}[language=c++]
 template <typename T, typename U> 
-	class A { 
-		T x; 
-		U y; 
+class A { 
+	T x; 
+	U y; 
 	
 	public: 
 		A() { cout << "constructor";} 
@@ -582,6 +282,418 @@ plt::savefig("./cx_out/fileName.png");
 \section*{Scientific Notation in C++}
 
 The number \texttt{42030} can also be seen as \texttt{4.203e4} since we shift the decimal point 4 places to the left. Analogous with shifting to the right.
+	
+\section*{Constructing Matrices and Vectors}
+\begin{lstlisting}[language=C++]
+// same data different shape
+Map<Matrix<TYPE, Dynamic , Dynamic>> newMat(M.data(),newRows,newCols);
+// (Deep) copy data of M
+MatrixXd xMat = MatrixXd::Map(M.data(), n, n);
+\end{lstlisting}
+
+
+\psection{Sizes, Rows, Cols, Resize}
+\begin{lstlisting}[language=C++]
+A.size() // total number of elements in matrix
+A.rows() // number of rows
+A.cols() // number of cols
+A.resize(10,100) // resized to 10 rows and 100 columns
+\end{lstlisting}
+
+
+\psection{Filling matrices}
+\begin{lstlisting}[language=C++]
+A << R,	v // can also be done using blocks. 
+u .transpose( ) ,  0;
+B << A, A, A;     // B is three horizontally stacked A's.
+A.fill(10);       // Fill A with all 10's.
+
+MatrixXd::Identity(rows,cols)          
+C.setIdentity(rows,cols)                 
+MatrixXd::Zero(rows,cols)                
+C.setZero(rows,cols)                      
+MatrixXd::Ones(rows,cols)          
+C.setOnes(rows,cols)                 
+MatrixXd::Random(rows,cols)  // uniform random numbers in (-1,1).
+C.setRandom(rows,cols)                 
+VectorXd::LinSpaced(size,low,high)       // includes lower and higher bound -> if size=1 only higher. 
+v.setLinSpaced(size,low,high)         
+VectorXi::LinSpaced(((hi-low)/step)+1, low,low+step*(size-1))
+\end{lstlisting}
+
+
+
+\psection{Reshaping using Map}
+\begin{lstlisting}[language=C++]
+// same data different shape
+Map<Matrix<TYPE, Dynamic , Dynamic>> newMat(M.data(),newRows,newCols);
+// (Deep) copy data of M
+MatrixXd xMat = MatrixXd::Map(M.data(), n, n);
+\end{lstlisting}
+
+
+\psection{Solving Equations}
+\begin{lstlisting}[language=C++]
+// Solve Ax = b. Result stored in x
+x = A.ldlt().solve(b));  // A sym. p.s.d.    #include <Eigen/Cholesky>
+x = A.llt().solve(b));  // A sym. p.d.      #include <Eigen/Cholesky>
+x = A.lu().solve(b));  // Stable and fast. #include <Eigen/LU>
+x = A.qr().solve(b));  // No pivoting.     #include <Eigen/QR>
+x = A.svd().solve(b));  // Stable, slowest. #include <Eigen/SVD>
+// .ldlt() -> .matrixL() and .matrixD()
+// .llt()  -> .matrixL()
+// .lu()   -> .matrixL() and .matrixU()
+// .qr()   -> .matrixQ() and .matrixR()
+// .svd()  -> .matrixU(), .singularValues(), and .matrixV()
+\end{lstlisting}
+
+\psection{Triangular Views}
+We have the following options \texttt{Upper, Lower, StrictlyUpper, StrictlyLower, UnitUpper, UnitLower}
+\begin{lstlisting}
+	MatrixXd m2 = m.triangularView<Xxx>();
+\end{lstlisting}
+
+\psection{Reductions}
+\begin{lstlisting}[language=C++]
+R.minCoeff()              
+R.maxCoeff()              
+s = R.minCoeff(&r, &c)   
+R.sum()                  
+R.colwise().sum()      
+R.prod()                
+R.rowwise().prod()        
+R.trace()                
+(a > 2).all() // if all a_i > 2 true             
+R.rowwise().all()     
+(a > 2).any()    // if any a_i > 2 true        
+(a > 2).count() // count a_i > 2 
+R.colwise().any()  
+x.norm()                 
+x.squaredNorm()       
+x.dot(y)                 
+x.cross(y)     //Requires #include <Eigen/Geometry>
+\end{lstlisting}
+
+
+\TODO{triangulare view etc, diagonal etc .}
+
+\TODO{sparse formats}
+\TODO{CRS / COO format}
+
+
+
+
+\TODO{timing 6.1 interpol -> see timing}
+
+
+\psection{Kronecker Product}
+\begin{lstlisting}
+	C = kroneckerProduct(A,B).eval();
+\end{lstlisting}
+
+
+\section*{Sparse Matrices}
+
+\TODO{nnz arithmetics}
+\psection{NNZ Arithmetics}
+Es gilt:
+
+\TODO{NNZ arithmetics}
+
+\psection{Defining sparse matrices}
+\begin{lstlisting}[language=C++]
+#include <Eigen/Sparse>
+SparseMatrix<double> mat(rows,cols);
+std::vector<Triplet<double>> tripletVec;
+tripletVec.reserve(n);
+for(int i = 0; i < n; i++){
+	double val = 2;
+	Triplet<double> newTriplet(row,col,val);
+	tripletVec.push_back(newTriplet);
+}
+X.setFromTriplets(tripletVec.begin(), tripletVec.end());
+X.makeCompressed();
+\end{lstlisting}
+
+
+
+\psection{Solving Linear Equations with Sparse Matrices}
+\begin{lstlisting}[language=C++]
+Eigen::SparseMatrix<double> A(n,n);
+A.reserve(3*n);
+for(;;){
+	A.insert(i,i-1) = 100;
+}
+A.makeCompressed(); // VERY IMPORTANT
+Eigen::SparseLU<Eigen::SparseMatrix<double>> Ax_lu(A) 
+newX = Ax_lu .solve(b);
+\end{lstlisting}
+
+
+\psection{Using sparse matrixes}
+\begin{lstlisting}[language=c++]
+	//now we loop over every non zero entry of M (for the left hand size of the kronecker product)
+	// loop over every column
+	for(int i = 0; i < n;i++){
+		// we loop as long as there are still elements in the column
+		// we get the pointer to where the column starts and loop for as long as elements still are in this column
+		for(int index = colPointer[i]; index < colPointer[i+1] ; index++){
+			// we are now at the nonzero element in row "i" and column "j" and value "outerValue".
+			int outerRow = rowPointer[index];
+			int outerColumn = i;
+			double outerValue = values[index];
+			
+			// now we need to loop over all of M again to add the block to the kronecker matrix
+			
+			for(int innerI = 0; innerI < n;innerI++){
+				// we loop as long as there are still elements in the row
+				for(int innerIndex = colPointer[innerI]; innerIndex < colPointer[innerI+1] ; innerIndex++){
+					
+					int innerRow = rowPointer[innerIndex];
+					int innerColumn = innerI;
+					double innerValue = values[innerIndex];
+					
+					
+					Triplet<double> toAdd(n*outerRow+innerRow,n*outerColumn+innerColumn,outerValue*innerValue);
+					bVec.push_back(toAdd);
+				}
+			}
+		}
+	}
+\end{lstlisting}
+
+\section*{QR Decompositions}
+\psection{Householder Reflection}
+\begin{lstlisting}[language=matlab]
+function [Q,R] = qr_householder(A)
+%          Spiegelungen
+%         R ... obere (upper) Dreiecks-Matrix
+% Speicherplatz fuer Q & R
+[m,n] = size(A);
+Q = zeros(m,m);
+R = zeros(m,n);
+% Speicherplatz fuer die Householder-Spiegelungs Vektoren
+U = zeros(m,n);
+% QR-Zerlegung mit Householder-TransformationenBitte wenden!
+R = A;
+for j=1:n
+% wir extrahieren die zu eliminierende spalte
+w = R(j:m,j);
+% falls m < n ist, breche bei hier ab wenn j > m
+if ( j > m )
+break
+end
+% waehle Spiegelung mit ?kleinster? Wirkung
+if ( w(1) >= 0 )
+w(1) = w(1) - norm(w);
+else
+w(1) = w(1) + norm(w);
+end
+% normiere Spiegelungs Vektor
+u = w/(norm(w) + eps);
+% speichere normierten Spieglungs Vektor in U% wende die Householder-Spiegelung auf A(j:m,j:n) an
+U(j:m,j) = u; 
+for i=j:n
+R(j:m,i) = R(j:m,i) - 2.*u*(u'*R(j:m,i));
+end
+end% bauen nun Q? auf
+Q = eye(m) - 2.*U(:,1)*U(:,1)';
+for i=2:n
+H = eye(m) - 2.*U(:,i)*U(:,i)';
+Q = H*Q;
+end
+Q = Q';
+\end{lstlisting}
+
+\psection{Givens Rotation}
+Grundlegende Idee. Wir killen alle Einträge unterhalb der Diagonale in $A$ und bauen uns $R$ draus.
+$$\underbrace{\mathbb{1}G_1^{-1}\ldots G_k{-1}}_{=:Q} \underbrace{G_k \ldots G_1 A}_{=: R}$$
+\begin{lstlisting}[language=matlab]
+function [Q,R] = qrgivens(A)
+	[m,n] = size(A);
+	Q = eye(m);
+	R = A;
+	for j = 1:n
+		for i = m:-1:(j+1)
+			G = eye(m);
+			[c,s] = givensrotation( R(i-1,j),R(i,j) );
+			G([i-1, i],[i-1, i]) = [c, s; -s, c];
+			R = G*R;
+			Q = Q*G';
+		end
+	end
+end
+function [c,s] = givensrotation(a,b)
+	if b == 0
+		c = 1;
+		s = 0;
+	else
+		if abs(b) > abs(a)
+			r = a / b;
+			s = 1 / sqrt(1 + r^2);
+			c = s*r;
+		else
+			r = b / a;
+			c = 1 / sqrt(1 + r^2);
+			s = c*r;
+		end
+	end
+end
+\end{lstlisting}
+
+
+
+
+
+\psection{Householder QR}
+taken from code 3.3.3.29
+\begin{lstlisting}[language=c++]
+#include<Eigen/QR>
+Eigen::HouseholderQR<MatrixXd> qr(A);
+MatrixXd Q = qr.householderQ();
+MatrixXd R = qr.matrixQR().template triangularView <Eigen::Upper>();
+\end{lstlisting}
+
+
+\section*{Least Squares}
+
+\psection{Introduction}
+
+We are interested in solving a problem $\vec{A} \vec{x} = \vec{b}$, where the system is overdeterminded, there might not exist a solution. We are aiming for $x \in \operatorname{argmin}\limits_{y\in \mathbb{K}^n} ||Ay - b||_2 ^2$.
+
+
+\psection{Solve if $\vec{A}$ has full rank:}
+
+We have two options:
+
+\begin{itemize}
+	\item \textbf{Normal Equation} $A^T Ax = A^T b$
+	\begin{lstlisting}[language=c++]
+	VectorXd x = (A.transpose()*A).llt().solve(A.transpose()*b);
+	\end{lstlisting}
+	\item \textbf{QR decomposition} $||Ax-b||_2 = ||Q(Rx - Q^H b)||_2 = ||Rx - Q^H b||_2$
+	\begin{lstlisting}[language=c++]
+	VectorXd x = A.householderQr().solve(b);
+	\end{lstlisting}
+\end{itemize}
+
+
+\psection{Not full rank $\vec{A}$:}
+
+We get infinitely many solutions if $\vec{A}$ doesn't have full rank. In this case we are interested in the 
+
+\begin{mdframed}
+	We define the \textbf{generalized solution} $x^+ := \operatorname{argmin}\{ ||x||_2 : x\in \operatorname{lsq}(A,b)\}$. Use Theorem 3.1.3.6 (Formula for generalized solution).
+\end{mdframed}
+
+For this we use the Singular Value Decomposition as seen in code 3.4.3.7 (Computing generalized solution of $Ax=b$ via SVD)
+
+
+\begin{lstlisting}[language=c++]
+JacobiSVD<MatrixXd> svd(A,ComputeThinU | ComputeThinV);
+VectorXd solution = svd.solve(b);
+\end{lstlisting}
+
+\psection{Constrained Least Squares (3.6)}
+Assume we want to minimize $|| Ax-b ||_2$ under the constraint $Cx = d$. We use Lagrangian multipliers and get the \textit{augmented normal equations}:
+\begin{align*}
+	  \begin{bmatrix}
+	\vec{A}^T\vec{A} & \vec{C}^T \\ 
+\vec{C} & 0 
+	\end{bmatrix} \begin{bmatrix}
+	\vec{x} \\ \vec{m} 
+	\end{bmatrix} &= \begin{bmatrix}
+	\vec{A}^T \vec{b}\\ \vec{d}
+	\end{bmatrix}
+\end{align*}
+Alternatively we can also use the extended normal equations and get
+\begin{align*}
+\begin{bmatrix}
+\vec{-I} & \vec{A} & 0\\
+\vec{A}^T & 0 & \vec{C}^T\\
+0 & \vec{C} & 0 
+\end{bmatrix}
+\begin{bmatrix}
+\vec{r} \\ \vec{x} \\ \vec{m} 
+\end{bmatrix} &=
+\begin{bmatrix}
+\vec{b}\\ 0 \\ \vec{d}
+\end{bmatrix}
+\end{align*}
+
+
+\section*{Gaussian Block Elimination}
+Example:\begin{align*}
+\begin{bmatrix}
+\vec{\mathbb{1}} & \vec{C^T} \\
+\vec{C} & \vec{0}
+\end{bmatrix} \cdot \begin{bmatrix}
+\vec{x} \\ \vec{m}
+\end{bmatrix} &= \begin{bmatrix}
+\vec{0} \\ \vec{g}
+\end{bmatrix}\\
+\Rightarrow \vec{1\cdot x} + \vec{C^T\cdot m} &= \vec{0} \Rightarrow -\vec{C^T}\vec{m} = \vec{x}\\
+\Rightarrow \vec{C x} &= \vec{g} \\
+\Rightarrow \vec{-C}\cdot( \vec{C^Tm}) &= \vec{g}
+\end{align*}
+
+
+
+\section*{Data Interpolation and Fitting (Chapter 5)}
+
+
+There are three main approaches:
+
+\begin{itemize}
+	\item Using Vandermonde Matrix $\rightarrow$ never do this. Very badly conditioned matrix.
+	\item \textbf{Lagrange} Good choice, use Barycentric if interested in coeffs, if only need one eval use Aitken-Neville.
+	\item \textbf{Newton} If we dynamically add new data (update friendly) (5.2.3.23)
+\end{itemize}
+
+
+\textbf{Extraplation to 0}: Works really well if $\phi(t) = \phi(-t)$, we use Aitken-Neville on extrapolation point.
+
+
+\TODO{local interpolation}
+
+
+
+
+\section*{Function Approximation (Chapter 6)}
+
+Approximation is the combination of an interpolation scheme and sampling. We get to choose where to evaluate the function $f$.
+
+\begin{method}{Jackson's Theorem (6.1.1.11)}
+	If $f\in C^r([-1,1])$ ($r\in \mathbb{N}$ times continuously differentiable), then for any polynomial of degree $n \geq r$
+	\begin{align*}
+		\inf_{p \in \mathcal{P}} || f-p ||_{L^\infty [(-1,1)]} \leq (1 + \frac{\pi^2}{2})^r \frac{(n-r)!}{n!} || f^{(r)} ||_{L^\infty [(-1,1)]}
+	\end{align*}
+\end{method}
+
+We can also apply Jackson's Theorem to any interval using Lemma 6.1.1.20
+
+
+
+\psection{Convergence}
+
+
+\begin{itemize}
+\item Algebraic Convergence: data on line in log-log plot, $\exists p > 0:$  $T(n) \leq n^{-p}$
+
+\item Exponential Convergence: data on line in lin-log plot , $\exists 0 < q < 1:$  $T(n) \leq q^n$
+
+\end{itemize}
+
+
+
+
+\section{Quadrature (Chapter 7)}
+
+
+Basic Idea. We would like to approximate $\int_{a}^{b} f(x) dx$. 
+
+For this we use a quadrature rule \TODO{add stuff}
+
 
 \section*{Differential Equations}
 
@@ -661,8 +773,95 @@ conv_rate = -coeffs(0);
 
 
 
+\TODO{add matrix multiplication formula using sums}
+\TODO{cholesky decomposition}
 
 
+\section*{Integrale Ausrechnen}
+
+
+\subsection*{Direkte Integrale}
+Diese sind vom Typ $\int f(g(x)) g'(x) dx = F(g(x))$.
+
+\subsection*{Partielle Integration}
+\begin{method}{Partielle Integration}
+	\begin{align*}
+	\int f' \cdot g \ dx = f \cdot g - \int f \cdot g' \  dx
+	\end{align*}
+\end{method}
+\textbf{Beispiele}:
+
+
+\subsection*{Integrale rationaler Funktionen}
+\begin{method}{Partielle Integration}
+	$$\int \frac{p(x)}{q(x)} dx$$
+	Wenn nun $\deg(p) \geq \deg(q)$ dann machen wir eine Polynomdivision $p:q$, sonst mache eine Parzialbruchzerlegung
+\end{method}
+
+\subsection*{Substitutionsregel}
+\begin{method}{Substitutionsregel}
+	Ist $f$ stetig und $g$ erfüllt:
+	\begin{align*}
+	y = g(x) \iff x = g^{-1}(y)
+	\end{align*}
+	Dann gilt:
+	\begin{align*}
+	\int_a ^b f(g(x))g'(x) dx &= \int_{g(a)}^{g(b)} f(y) dy
+	\end{align*}
+	Als Merksatz gilt $dy = g'(x) dx$ respektive $dx = \frac{1}{t} dt$
+\end{method}
+
+
+\vfill\null
+\columnbreak
+
+% to have more vertical space in the table.
+
+{\renewcommand{\arraystretch}{1.5}
+	\begin{table}[]
+		\begin{tabular}{@{} p{.25\textwidth} p{.3\textwidth} p{.45\textwidth} @{}}
+			\toprule
+			Funktion & Ableitung & Bemerkung / Regel\\ \midrule
+			$x$ & $1$ &   \\
+			$x^2$& $2x$ &   \\
+			$x^n$& $n\cdot x^{n-1}$ & $n \in \R$  \\
+			$\frac{1}{x} = x^{-1}$ & $- \frac{1}{x^2}$ & \\
+			$\sqrt{x} = x^{\frac{1}{2}}$ & $\frac{1}{2\sqrt{x}}$ & \\ 
+			$\sqrt[n]{x} = x^{\frac{1}{n}}$ & $\frac{x^{\frac{1}{n} -1 }}{n}$ &  $\int x^{1/n} dx = \frac{n x^{1/n + 1}}{n+1} + C$\\ 
+			$e^x$ & $e^x$ & \\
+			$a^x$ & $\ln(a) \cdot a^x$& \\
+			$x^x = e^{x\log(x)}$ & $x^x \cdot (\log(x) + 1)$ & Kettenregel $e^{x\log(x)}$\\
+			$\ln(x)$ & $\frac{1}{x}$ & \\
+			$x\ln(x) - x$ & $\ln(x)$ &  \\ \midrule
+			$\sin(x)$ & $\cos(x)$ & \\
+			$\cos(x)$ & $- \sin(x)$ & \\ 
+			$\tan(x) = \frac{\sin(x)}{\cos(x)}$ & $\frac{1}{\cos^2(x)} = 1 + \tan^2(x)$ &\\
+			$\cot(x) = \frac{\cos(x)}{\sin(x)}$ & - $\frac{1}{\sin^2(x)}$ & \\ 
+			$\arcsin(x)$ & $\frac{1}{\sqrt{1 - x^2}}$ & $ \arcsin : [-1,1] \to [-\frac{\pi}{2},\frac{\pi}{2}]$\\
+			$\arccos(x)$ & $ - \frac{1}{\sqrt{1-x^2}}$ & $\arccos : [-1,1] \to [0, \pi]$\\
+			$\arctan(x)$ & $\frac{1}{1+x^2}$ & $\arctan:(-\infty, \infty) \to (- \frac{\pi}{2},\frac{\pi}{2})$\\
+			$\operatorname{arccot}(x)$ & $ - \frac{1}{1+x^2} $ & $\operatorname{arccot} : (-\infty, \infty) \to (0,\pi)$\\
+			\midrule
+			$\cosh(x)$ & $\sinh(x)$ &\\
+			$\sinh(x)$ & $\cosh(x)$ & \\
+			$\tanh(x)$ & $\frac{1}{\cosh^2(x)}$ & \\
+			$\operatorname{arsinh}(x)$ & $\frac{1}{\sqrt{1+x^2}}$ & $\forall x \in R$\\
+			$\operatorname{arcos}(x)$ & $\frac{1}{\sqrt{x^2 - 1}}$ & $\forall x \in (1, \infty)$\\		  $\operatorname{artanh}(x)$ & $\frac{1}{1-x^2}$ & $\forall x \in (-1,1)$\\
+			\midrule
+			$g(x) \cdot h(x)$ & $g(x) \cdot h'(x) + g'(x) \cdot h(x)$ & Produktregel\\
+			$\left(g(x)\right)^n$ & $n \cdot \left( g(x) \right)^{n-1} \cdot g'(x)$ & Potenzregel\\
+			$\frac{g(x)}{h(x)}$ & $\frac{ g'(x) \cdot h(x) - g(x)\cdot h'(x)}{\left(h(x)\right) ^2}$ & Quotientenregel\\
+			$h(g(x))$ & $h'(g(x)) \cdot g'(x)$ & Kettenregel\\
+			\bottomrule
+		\end{tabular}
+	\end{table}
+}
+
+
+
+
+\vfill\null
+\columnbreak
 
 
 
