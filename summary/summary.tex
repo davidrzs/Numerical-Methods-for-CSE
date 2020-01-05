@@ -132,7 +132,13 @@
 
 \begin{multicols}{2}
 	
-	
+\section*{Stuff I tend to forget}
+
+\begin{itemize}
+	\item \texttt{MatrixXd:Ones()} is not \texttt{MatrixXd::Identity()}
+	\item Frobenius Norm ist die normale $\sqrt{\cdot}$ Norm mit dem Befehl \texttt{.norm()}.
+\end{itemize}
+
 \section*{\texttt{C++} Objects - Initializer Lists}
 
 
@@ -151,9 +157,6 @@ class Point {
 			y = j; 
 		} 
 	*/    
-	
-	int getX() const {return x;} 
-	int getY() const {return y;} 
 }; 
 \end{lstlisting}
 
@@ -165,7 +168,6 @@ template <typename T>
 T mx(T x, T y){ 
 	return (x > y) ? x : y; 
 } 
-
 int main() { 
 	cout << mx<int>(3, 7) << mx<double>(3.0, 7.0) << mx<char>('g', 'e'); 
 	return 0; 
@@ -178,17 +180,14 @@ int main() {
 template <typename T, typename U> 
 class A { 
 	T x; 
-	U y; 
-	
+	U y; 	
 	public: 
 		A() { cout << "constructor";} 
 }; 
-
 int main() { 
 	A<char, char> a; 
 	A<int, double> b; 
 } 
-
 \end{lstlisting}
 
 
@@ -665,7 +664,7 @@ There are three main approaches:
 \textbf{Extraplation to 0}: Works really well if $\phi(t) = \phi(-t)$, we use Aitken-Neville on extrapolation point.
 
 
-\TODO{local interpolation}
+\TODO{KONVERGENZ ZEUGS}
 
 
 
@@ -698,7 +697,7 @@ We can also apply Jackson's Theorem to any interval using Lemma 6.1.1.20
 
 
 
-\section{Quadrature (Chapter 7)}
+\section*{Quadrature (Chapter 7)}
 
 
 Basic Idea. We would like to approximate $\int_{a}^{b} f(x) dx$. 
