@@ -317,7 +317,11 @@ newX = Ax_lu .solve(b);
 \section{QR Decompositions}
 \psection{Givens Rotation}
 See \texttt{3.3.3.14} as well as \texttt{3.3.3.20}
+// .qr()   -> .matrixQ() and .matrixR()
 
+.householderQr() 
+
+Q = qr.householderQ();
 \TODO{add different mehods}
 
 
@@ -552,6 +556,8 @@ Now we can use quadrature methods to approximate the integral.
 
 
 
+
+FROBENIUSNORM
 
 
 
