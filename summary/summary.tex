@@ -231,7 +231,9 @@ Map<VectorXd> te (t.data(),t.size());
 \begin{lstlisting}[language=c++]
 #include <vector>
 std::vector<int> M {10,20,40,80,160,320,640,1280};
-
+// Create a vector of size n with 
+// all values as 10. 
+vector<int> vect(n, 10); 
 vector<int> g1; 
 g1.push_back(123); 
 g1.size(); 
@@ -587,7 +589,7 @@ We have two options:
 	\end{lstlisting}
 \end{itemize}
 
->>>>>>> 259d522f4e3024becc2e64ea8a8ea09684721e30
+
 
 \psection{Not full rank $\vec{A}$:}
 
@@ -751,8 +753,8 @@ $$
 We call a single step Runge Kutta method consistent iff. 
 \begin{align*}
 	\begin{array}
-	{c|ccccc}
-	\vec{c} &  \Theta \\
+	{c|c}
+	\vec{c} &  \vec{A} \\
 	\hline
 	& \vec{b}^T
 	\end{array} &:= 
@@ -774,7 +776,68 @@ conv_rate = -coeffs(0);
 
 
 
+\section*{Stiff Problems}
 
+\psection{Calculating the stability function:}
+
+The stability function $S(z)$ is defined as $y_1 = S(z)y(0)$ for any Runge-Kutta method.
+
+\begin{itemize}
+	\item \textbf{Explicit Euler} $y_1 = y_0 + h\cdot f(y_0)$, with model problem $y' = \lambda y$, hence we have $y_1 = y_0 + h\cdot \lambda \cdot y_0 = y_0 \left(1 + \lambda h\right) $. Using $z = h \lambda$ we get $S(z) = 1 + z$.
+	\item \textbf{Trapezoidal rule} $y_1 = y_0 + h\frac{1}{2}(f(y_0) + f(y_0 + hf(y_0)))$ with $y' = \lambda y$, hence $y_1 = y_0 + h\frac{1}{2}(\lambda y_0 + \lambda y_0 + \lambda^2 h y_0)$ giving us $y_1 = y_0 + h\lambda y_0 + \frac{\lambda^2 h^2 y_0}{2}$ resulting in $y_1 = y_0 \left( 1 + h\lambda + \frac{\lambda^2 h^2}{2}\right)$ which yields the stability function $S(z) = 1 + z + \frac{z^2}{2}$.
+\end{itemize}
+
+
+\begin{method}{Stability Function via Butcher Table}
+	The discrete evolution $\Psi_\lambda ^h$ of an $s$-stage Runge-Kutta single step method with Butcher scheme 	$\begin{array}
+		{c|c}
+		\vec{c} &  \vec{A} \\
+		\hline
+		& \vec{b}^T
+	\end{array}$, the stability function is given by:
+	$$S(z) = 1 + z\vec{b}^T(\vec{I} - z\vec{A})^{-1}\vec{1}$$
+	where $\vec{1} = [1,\ldots,1]^T$
+	
+\end{method}
+
+\begin{method}{Region of (absolute) Stability}
+	$$S:\Phi := \{z \in \mathbb{C} : |S(z)| < 1  \} \subseteq \mathbb{C}$$
+	This definition follows from the model problem $y' = \lambda y$ where we only have solutions that don't blow up if $|S(\lambda h)|<1$.
+\end{method}
+
+\begin{method}{Stiff Problems}
+	A problem is stiff if it imposes much tighter timestep constraints (to keep the accuracy) on explicit single time step methods than the accuracy would usually require.
+	
+	An IVP for an autonomous ODE $\vec{y'} = \vec{f}(\vec{y})$ will probably be stiff, if, for substantial periods of time:
+	$$\min\{\operatorname{Re} \lambda : \lambda \in \sigma (D\vec{f}(\vec{y}(t)))\} \ll 0$$
+	where $t\to \vec{y}(t)$ is the trajectory and $\sigma$ is the set of eigenvalues. See example 12.2.0.16 for an example.
+	
+	Furthermore, if $\max\{\operatorname{Re} \lambda : \lambda \in \sigma (D\vec{f}(\vec{y}(t)))\} \approx 0$, we are unlikely to see blow ups.
+\end{method}
+
+
+
+\psection{Stability}
+
+\begin{method}{A stability of RK method}
+	A Runge-Kutta single step method with stability function $S$ is A-stable if
+	$$\mathbb{C}^- := \{z \in \mathbb{C} : \operatorname{Re} Z < 0\} \subseteq S_\Phi$$
+	where $S_\Phi$ is the stability region.
+	
+	Die Idee dahinter: Wenn die Testfunktion nicht explodiert $h\lambda = z \leq 0$, dann sollte das Verfahren für alle Zeitschritte nicht explodieren.
+\end{method}
+
+Nun gibt es aber das Problem, dass wir langfristig nicht explodieren aber grosse Diskretisierungsfehler haben. Um dies zu vermeiden gibt es:
+
+\begin{method}{L stability of RK method}
+	If the stability function $S(z)$ satisfies:
+	$$\operatorname{Re} z < 0 \Rightarrow |S(z)| < 1$$
+	$$\lim\limits_{\operatorname{Re}z \to - \infty} S(z) = 0$$
+	
+	Insbesondere gilt L-stabil $\iff$ A-stabil \& "$S(-\infty) = 0$"
+\end{method}
+
+Implicit Euler is L stable and Implicit midpoint is A stable.
 
 \section*{Integrale Ausrechnen}
 
