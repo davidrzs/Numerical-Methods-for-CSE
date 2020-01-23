@@ -237,8 +237,8 @@ vector<int> vect(n, 10);
 vector<int> g1; 
 g1.push_back(123); 
 g1.size(); 
-g1.resize(4); 
-g1.reserve(100);
+g1.resize(4); // does change size 
+g1.reserve(100); // doesn't change size
 cout << g1[2];
 \end{lstlisting}
 
@@ -396,9 +396,6 @@ x.cross(y)     //Requires #include <Eigen/Geometry>
 
 
 
-\TODO{timing 6.1 interpol -> see timing}
-
-
 \psection{Kronecker Product}
 \begin{lstlisting}
 	C = kroneckerProduct(A,B).eval();
@@ -519,7 +516,7 @@ Q = Q';
 
 \psection{Givens Rotation}
 Grundlegende Idee. Wir killen alle Einträge unterhalb der Diagonale in $A$ und bauen uns $R$ draus.
-$$\underbrace{\mathbb{1}G_1^{-1}\ldots G_k{-1}}_{=:Q} \underbrace{G_k \ldots G_1 A}_{=: R}$$
+$$\underbrace{\mathbb{1}G_1^{-1}\ldots G_k^{-1}}_{=:Q} \underbrace{G_k \ldots G_1 A}_{=: R}$$
 \begin{lstlisting}[language=matlab]
 function [Q,R] = qrgivens(A)
 	[m,n] = size(A);
@@ -566,6 +563,10 @@ MatrixXd Q = qr.householderQ();
 MatrixXd R = qr.matrixQR().template triangularView <Eigen::Upper>();
 \end{lstlisting}
 
+ 
+ 
+\vfill\null
+\columnbreak
 
 \section*{Least Squares}
 
@@ -667,11 +668,6 @@ There are three main approaches:
 \textbf{Extraplation to 0}: Works really well if $\phi(t) = \phi(-t)$, we use Aitken-Neville on extrapolation point.
 
 
-\TODO{KONVERGENZ ZEUGS}
-
-
-
-
 \section*{Function Approximation (Chapter 6)}
 
 Approximation is the combination of an interpolation scheme and sampling. We get to choose where to evaluate the function $f$.
@@ -685,6 +681,7 @@ Approximation is the combination of an interpolation scheme and sampling. We get
 
 We can also apply Jackson's Theorem to any interval using Lemma 6.1.1.20
 
+Generally use Chebychev interpolation, (better at controlling phenomena such as Runge's problem).
 
 
 \psection{Convergence}
@@ -700,7 +697,7 @@ We can also apply Jackson's Theorem to any interval using Lemma 6.1.1.20
 
 
 
-\section*{Quadrature}
+\section*{Quadrature (Chapter 7)}
 
 
 Basic Idea. We would like to calculate $\int_{a}^{b} f(x) dx = \sum_{j=1}^{n} w_j \cdot f(c_j)$, where $w_j$ are weights and $c_j$ are nodes. 
@@ -758,6 +755,17 @@ Chop the integral into smaller integrals and integrate them seperately. Has alge
 \includegraphics[width=\linewidth]{img/o2.png}
 
 
+\section*{Iterative Meth for nonlin. Sys. of Equations (Chapter 8)}
+
+
+\psection{Nonlinear least squares}
+{
+\color{red} Basic idea (can be disgusting): Use Gauss to find where $\operatorname{grad}(\phi) = 0$, this will be a minimal solution.
+}
+
+\textbf{Better Idea:} Use Gauss-Newton method. We linearize ${\displaystyle {\tilde {f}}(x)=f(x^{0})+\nabla f(x^{0})^{T}(x-x^{0})}$ and then minimize ${\displaystyle \min _{x\in \mathbb {R} ^{n}}\left\{{\frac {1}{2}}\|{\tilde {f}}(x)\|^{2}={\frac {1}{2}}\|J(x-x^{0})+f(x^{0})\|^{2}\right\}}$. Now we set ${\displaystyle \nabla {\tilde {f}}(x)=J^{T}\left(J(x-x^{0})+f(x^{0})\right)} = 0$
+
+See procedure in last subsection of chapter 8.
 
 
 \section*{Differential Equations}
@@ -924,6 +932,18 @@ Diese sind vom Typ $\int f(g(x)) g'(x) dx = F(g(x))$.
 	\end{align*}
 	Als Merksatz gilt $dy = g'(x) dx$ respektive $dx = \frac{1}{t} dt$
 \end{method}
+
+
+\psection{Matrixinverse}
+
+\begin{align*}
+	\begin{pmatrix}
+	a & b \\ c & d 
+	\end{pmatrix} ^{-1} &= \frac{1}{ad-bc} 	\begin{pmatrix}
+d & -b \\ -c & a
+	\end{pmatrix}
+\end{align*}
+
 
 
 \vfill\null
