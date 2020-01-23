@@ -700,12 +700,64 @@ We can also apply Jackson's Theorem to any interval using Lemma 6.1.1.20
 
 
 
-\section*{Quadrature (Chapter 7)}
+\section*{Quadrature}
 
 
-Basic Idea. We would like to approximate $\int_{a}^{b} f(x) dx$. 
+Basic Idea. We would like to calculate $\int_{a}^{b} f(x) dx = \sum_{j=1}^{n} w_j \cdot f(c_j)$, where $w_j$ are weights and $c_j$ are nodes. 
 
-For this we use a quadrature rule \TODO{add stuff}
+A \textit{Quadrature Rule} usually specifies weights and nodes on the interval $[-1,1]$, we then transform them accordingly to $[a,b]$
+
+\begin{align*}
+	w_i &\mapsto \frac{(b-a)}{2} \cdot w_i\\
+	c_i &\mapsto \frac{1}{2}(1-c_i)a + \frac{1}{2}(1+c_i)b
+\end{align*}
+
+The \textbf{Quadrature Error} is given by $E_n(f) = \left| \int_{a}^b f(t) dt - Q_n(f)\right|$ 
+
+\psection{Types of quadrature error}
+
+\begin{itemize}
+	\item \textsc{Algebraic Convergence} $E(n) = \mathcal{O}(n^{-p})$, $p > 0$
+	\item \textsc{Exponential Convergence}  $E(n) = \mathcal{O}(q^n)$, $0 \leq q < 1$, here use \texttt{log} on the error and then do linear fitting.
+\end{itemize}
+
+
+
+\psection{Order of quadrature rules}
+
+\includegraphics[width=\linewidth]{img/order.png}
+
+Grundsätzlich: Newton-Cotes haben äquidistante Intervalle. Auf diesen Integrieren wir Lagrange Polynome, dies sind dann unsere Gewichte.
+
+\TODO{make a small example}.
+
+
+\begin{tabular}{|c|c|c|}
+	\hline 
+	$n$ &  & Order \\ 
+	\hline 
+	1 & midpoint rule & 2 \\ \hline 
+	2 & trapezoidal rule & 2 \\ \hline 
+	3 & simpson rule & 4 \\ \hline 
+	4 & $\frac{3}{8}$-rule & 4 \\ \hline 
+	5 & Milne rule & 6 \\ \hline 
+	n & clenshaw curtis (from chebyshev, has all positive weights) & n \\ \hline 
+	n & gauss legendre & 2n \\ \hline 
+\end{tabular} 
+
+
+
+\psection{Composite Quadrature}
+
+Chop the integral into smaller integrals and integrate them seperately. Has algebraic convergence.
+
+
+\psection{Order of Convergence}
+
+\includegraphics[width=\linewidth]{img/o1.png}
+\includegraphics[width=\linewidth]{img/o2.png}
+
+
 
 
 \section*{Differential Equations}
@@ -918,13 +970,6 @@ Diese sind vom Typ $\int f(g(x)) g'(x) dx = F(g(x))$.
 		\end{tabular}
 	\end{table}
 }
-
-
-
-
-
-FROBENIUSNORM
-
 
 \vfill\null
 \columnbreak
