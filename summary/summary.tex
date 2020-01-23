@@ -63,6 +63,8 @@
 \definecolor{variable}{HTML}{001080}
 \definecolor{string}{HTML}{86B300}
 
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+
 
 \lstset{
 	% How/what to match
@@ -389,13 +391,6 @@ x.cross(y)     //Requires #include <Eigen/Geometry>
 
 
 
-
-\TODO{sparse formats}
-\TODO{CRS / COO format}
-
-
-
-
 \psection{Kronecker Product}
 \begin{lstlisting}
 	C = kroneckerProduct(A,B).eval();
@@ -404,10 +399,6 @@ x.cross(y)     //Requires #include <Eigen/Geometry>
 
 \section*{Sparse Matrices}
 
-\psection{NNZ Arithmetics}
-Es gilt:
-
-\TODO{NNZ arithmetics}
 
 \psection{Defining sparse matrices}
 \begin{lstlisting}[language=C++]
@@ -726,8 +717,6 @@ The \textbf{Quadrature Error} is given by $E_n(f) = \left| \int_{a}^b f(t) dt - 
 
 Grundsätzlich: Newton-Cotes haben äquidistante Intervalle. Auf diesen Integrieren wir Lagrange Polynome, dies sind dann unsere Gewichte.
 
-\TODO{make a small example}.
-
 
 \begin{tabular}{|c|c|c|}
 	\hline 
@@ -991,8 +980,40 @@ d & -b \\ -c & a
 	\end{table}
 }
 
+
+\psection{Multidimensional Derivative using the Definition}
+
+
+\textbf{Example (Total Differentiability)}
+Let $f(0,0) = 0$ and $f(x,y) = \frac{x^2 y^2}{x^2+y^2}$ for $(x,y)\neq (0,0)$. 
+
+We calculate the Jacobi Matrix at $(0,0)$ and plug it into the definition of differentability:
+\begin{align*}
+\frac{\partial f}{\partial x}(0,0) &= \lim\limits_{h \to 0}\frac{f(0+h,0) -f(0,0)}{h} = \lim\limits_{h \to 0} \frac{\frac{0h^2}{h^2 + 0} - 0}{h} = 0\\
+\frac{\partial f}{\partial y}(0,0) &= \lim\limits_{h \to 0}\frac{f(0,0+h) -f(0,0)}{h} = \lim\limits_{h \to 0} \frac{\frac{h^2 0}{0+h^2} - 0}{h} = 0
+\end{align*}
+Hence we have $J_f (0,0) = \left[0,0\right]$. Now we calculate:
+\begin{align*}
+&\lim\limits_{\substack{(x,y)\to (0,0)}} \frac{\left(f\left(\begin{pmatrix}
+	x \\ y
+	\end{pmatrix}\right) -f\left(\begin{pmatrix}
+	0 \\ 0
+	\end{pmatrix}\right) - J_f(0,0)\begin{pmatrix}
+	x-0 \\ y -0
+	\end{pmatrix}\right)}{\norm{\begin{pmatrix}
+		x -0 \\ y -0
+		\end{pmatrix}}} \\
+&= \lim\limits_{\substack{(x,y)\to (0,0)}} \frac{\frac{x^2 y^2}{x^2 + y^2} - 0 - \left[0,0\right] \begin{pmatrix}
+	x-0 \\ y -0
+	\end{pmatrix}}{ \sqrt{x^2 + y^2} }\\
+&= \lim\limits_{\substack{(x,y)\to (0,0)}} \frac{\frac{x^2 y^2}{x^2 + y^2}}{ \sqrt{x^2 + y^2} }\\
+&=  \lim\limits_{\substack{r \to 0}} \frac{r^4 \sin^2(\varphi) \cos^2(\varphi) }{r^3} = 0
+\end{align*}
+
+
+
 \vfill\null
-\columnbreak
+
 
 
 
